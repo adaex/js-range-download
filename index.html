@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Download</title>
+  </head>
+  <body>
+    <h1 id="progress"></h1>
+    <button onclick="start()">开始</button>
+    <button onclick="pause()">暂停</button>
+  </body>
+  <script src="./downloader.js"></script>
+  <script>
+    const downloader = new RangeDownloader({
+      url: 'https://bcloud-alipic.lanhuapp.com/video/axure_video_1_new.mp4',
+      onload(self) {
+        console.log('onload', self)
+        let res = self.getResultAsBlob()
+        let ele = document.createElement('a')
+        ele.download = 'axure_video_1_new.mp4'
+        ele.href = URL.createObjectURL(res)
+        document.body.append(ele)
+        ele.click()
+        URL.revokeObjectURL(res)
+        self.cancel()
+      },
+      onprogress(self) {
+        const progress =
+          self.downloadedSize.toString() +
+          ' / ' +
+          self.totalSize.toString() +
+          ' (' +
+          Math.floor((self.downloadedSize / self.totalSize) * 100) +
+          '%)'
+        document.querySelector('#progress').innerText = progress
+        console.log(progress)
+      },
+    })
+
+    function start() {
+      downloader.start()
+    }
+    function pause() {
+      downloader.pause()
+    }
+  </script>
+</html>
